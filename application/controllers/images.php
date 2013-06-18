@@ -6,25 +6,20 @@ class Images extends CI_Controller {
 	{
 		parent::__construct();
 		log_message('debug', 'Class '.__CLASS__.' initialized.');
-		
-		// Carrega a biblioteca ci_timthumb
 		$this->load->library('ci_timthumb');
-
-		
 	}
 
 	function _remap()
 	{
 		$params = $this->uri->segment(2); //Primeiro parâmetro
-		$src 	= $this->uri->segment(3); //Segundo parâmetro
+		$_SERVER['QUERY_STRING'] = $params; //Altera a imagem do cache quando trocar o parametro
+		$params = explode('__', $params);
+		$src = end($params); //Atribui o último índice do array para a variável src
 
-		//Verifica se o segundo parâmetro está vazio e se os últimos 3 caracteres do segundo contém os caracteres do array
-		if (!$src AND in_array(substr($params, -3), array('jpg', 'gif', 'png', 'peg'))) {
-			$src = $params;
-			$params = FALSE;
-		}
+		array_pop($params); //Remove o último índice do array
 
 		if ($params) {
+			$params = $params[0];
 			$params = $this->_organize_parameters($params);	
 		}
 
@@ -51,6 +46,7 @@ class Images extends CI_Controller {
 			}
 			$params_array[$key] = $value;
 		}
+
 
 		return $params_array;
 	}
